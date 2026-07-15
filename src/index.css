@@ -64,6 +64,7 @@ body {
   transform: scale(1.05);
   transition: all;
 }
+/* Form */
 .productForm{
   width: 450px;
   margin: 50px auto;
@@ -98,15 +99,29 @@ body {
   box-sizing: border-box;
   margin-bottom: 15px;
 }
+.previweImg{
+  height: 5rem !important;
+  width: 5rem !important;
+  padding: 5px;
+
+}
+.previweImg img{
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
 .subBtn{
-  background: #88bda4;
+  background: red;
   color: white;
-  border: none;
+  border: 1px solid black;
   border-radius: 10px;
   font-weight: bold;
   font-size: 18px;
   cursor: pointer;
-  width: 100%;
+  width: 40%;
+  display: flex;
+  justify-content: center;
+  margin: 1px auto;
   padding: 12px;
 
 }
