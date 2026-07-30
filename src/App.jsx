@@ -1,17 +1,34 @@
-import { memo, useState } from "react";
+import { memo, useEffect, useState,} from "react";
 import Header from "./components/header";
 import Footer from "./components/footer";
 import { Route, Routes } from "react-router-dom";
 import Wishlist from "./pages/wishlist";
 import Home from "./pages/home";
-import { products } from "./components/dummy";
-import Product from "./pages/product";
 import Form from "./pages/form";
+import { axiosInstance } from "./axios";
+import Product from "./pages/product";
+import Signup from "./pages/signup";
+import Login from "./pages/login";
 
 const App = () => {
-  const data = products;
-
   const [favData, setFavData] = useState([]);
+  const [product, setProducts] = useState([]);
+
+  useEffect(()=>{
+      
+      const fetchData= async()=>{
+        try{
+           const products = await axiosInstance.get("/products");
+           setProducts(products?.data?.data);
+        }catch(error){
+          console.log(error);
+        }
+      }
+      fetchData();
+  },[]);
+ 
+
+  
 
   const addToCart = (product) => {
     setFavData((prev) => [...prev, product]);
@@ -57,7 +74,7 @@ const App = () => {
         element={
           // <h1
           <Home
-              data={data}
+              products={product}
               addToCart={addToCart}
               toggleWishlist={toggleWishlist}
               favData={favData}
@@ -69,23 +86,34 @@ const App = () => {
         element={
         <Form
         
-        data={data}/>
+        data={product}/>
         }/>
+
+
+           <Route
+          path="/signup"
+          element={<Signup/>}
+        />
+
+      <Route
+          path="/login"
+          element={<Login/>}
+        />
         <Route
           path="/"
           element={
             <Home
-              data={data}
+              products={product}
               addToCart={addToCart}
               toggleWishlist={toggleWishlist}
               favData={favData}
             />
           }
         />
-        <Route path="/" element={<Home data={data} />} />
+        <Route path="/" element={<Home data={product} />} />
         <Route
           path="/product"
-          element={<Product data={data} addToCart={addToCart} />}
+          element={<Product data={product} addToCart={addToCart} />}
         />
         <Route
           path="/wishlists"

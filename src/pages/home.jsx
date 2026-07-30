@@ -1,20 +1,22 @@
 import { memo } from "react";
 import Banner from "../components/banner";
 import Card from "../components/card";
-const Home = ({ data, addToCart, toggleWishlist, favData }) => {
+import { dummyImg, imgBaseURL } from "../staticData";
+const Home = ({ products=[], addToCart, toggleWishlist, favData }) => {
   return (
     <div>
       <Banner />
 
       <div className="container">
-        {data.map((elem) => {
+        {products.map((elem) => {
           return (
             <Card
-              id={elem.id}
-              title={elem.title}
-              discription={elem.description}
+              id={elem._id}
+              title={elem.name}
+              discription={elem.description || "description is not found"}
               price={elem.price}
-              image={elem.image}
+             image={elem?.image ? `${imgBaseURL}${elem?.image}`   : dummyImg}
+             
               addToCart={addToCart}
               toggleWishlist={toggleWishlist}
               favData={favData}
