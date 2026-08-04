@@ -1,7 +1,9 @@
 import { useState, memo } from "react";
 import { axiosInstance } from "../axios";
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState({});
@@ -36,7 +38,15 @@ const Signup = () => {
 
     console.log( " submitted data " , obj);
 
-    await axiosInstance.post("/user/login", obj);
+    const responese=await axiosInstance.post("/user/login", obj);
+    console.log(responese.data);
+       navigate("/");
+       
+
+    const token = responese.data.token;
+    localStorage.setItem("token", token);
+
+    console.log("Token saved",token);
     
 
     // Clear form
@@ -48,7 +58,7 @@ const Signup = () => {
   return (
     <div className="productForm">
       <form onSubmit={handleSubmit}>
-        <h1>Sign-Up</h1>
+        <h1>Log in </h1>
 
         <input
           type="email"

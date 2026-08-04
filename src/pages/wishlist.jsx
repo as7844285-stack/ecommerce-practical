@@ -1,6 +1,20 @@
 import { CircleX } from "lucide-react";
+import { axiosInstance } from "../axios";
+import { useEffect } from "react";
 
-export default function Wishlist({ favData, clearWishList }) {
+export default function Wishlist({ favData, setFavData, clearWishList }) {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const responce = await axiosInstance.get("/products");
+        console.log("responce", responce);
+        setFavData(responce?.data?.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, []);
   return (
     <div className="wishlist">
       <div
@@ -8,14 +22,14 @@ export default function Wishlist({ favData, clearWishList }) {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          padding:"1rem",
+          padding: "1rem",
         }}
       >
         <h2>My Wishlist </h2>
-        {favData.length>0&&(
-        <button className="clearBtn" onClick={clearWishList}>
-          clear All <CircleX />
-        </button>
+        {favData.length > 0 && (
+          <button className="clearBtn" onClick={clearWishList}>
+            clear All <CircleX />
+          </button>
         )}
       </div>
       <div className="container">

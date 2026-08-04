@@ -3,30 +3,23 @@ import Card from "../components/card";
 import { axiosInstance } from "../axios";
 import { dummyImg, imgBaseURL } from "../staticData";
 
+export default function Product() {
+  const [products, setProducts] = useState([]);
 
-export default function Product({ addToCart }) {
-
-const [products , setProducts]= useState([]);
-
-  useEffect(()=>{
-
-
-    const fetchData = async ()=>{
-      try{
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
         const products = await axiosInstance.get("/products");
-        console.log("products",products);
+        console.log("products", products);
 
         setProducts(products?.data?.data);
-        console.log("products",products);
-      }catch(err){
+        console.log("products", products);
+      } catch (err) {
         console.log(err);
       }
-    }
+    };
     fetchData();
-  },[])
-
- 
-
+  }, []);
 
   return (
     <div className="">
@@ -40,8 +33,8 @@ const [products , setProducts]= useState([]);
               title={elem.name}
               discription={elem?.description || "description not found"}
               price={elem.price}
-              image={elem?.image ? `${imgBaseURL}${elem?.image}`   : dummyImg}
-              addToCart={addToCart}
+              image={elem?.image ? `${imgBaseURL}${elem?.image}` : dummyImg}
+              addToCart={elem._id}
             />
           );
         })}

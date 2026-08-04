@@ -1,4 +1,4 @@
-import { memo, useEffect, useState,} from "react";
+import { memo, useEffect, useState } from "react";
 import Header from "./components/header";
 import Footer from "./components/footer";
 import { Route, Routes } from "react-router-dom";
@@ -9,32 +9,23 @@ import { axiosInstance } from "./axios";
 import Product from "./pages/product";
 import Signup from "./pages/signup";
 import Login from "./pages/login";
+import Cart from "./pages/cart";
 
 const App = () => {
   const [favData, setFavData] = useState([]);
   const [product, setProducts] = useState([]);
 
-  useEffect(()=>{
-      
-      const fetchData= async()=>{
-        try{
-           const products = await axiosInstance.get("/products");
-           setProducts(products?.data?.data);
-        }catch(error){
-          console.log(error);
-        }
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const products = await axiosInstance.get("/products");
+        setProducts(products?.data?.data);
+      } catch (error) {
+        console.log(error);
       }
-      fetchData();
-  },[]);
- 
-
-  
-
-  const addToCart = (product) => {
-    setFavData((prev) => [...prev, product]);
-
-    
-  };
+    };
+    fetchData();
+  }, []);
 
   // Don't put this inside addToCart
   const toggleWishlist = (product) => {
@@ -45,80 +36,45 @@ const App = () => {
     } else {
       setFavData([...favData, product]);
     }
-    const getFavData = JSON.parse(localStorage.getItem("products")) || [];
-
-    getFavData.push(product);
-
-    localStorage.setItem("products", JSON.stringify(getFavData));
   };
-
-
 
   //clear wishlist
   const clearWishList = () => {
-
     console.log("clearWishlist clicked");
     setFavData([]);
-    localStorage.removeItem("products")
   };
 
   //local storage
-  
 
   return (
     <>
       <Header />
 
       <Routes>
-        <Route path="/"
-        element={
-          // <h1
-          <Home
-              products={product}
-              addToCart={addToCart}
-              toggleWishlist={toggleWishlist}
-              favData={favData}
-            />
-          
-          // />
-        }/>
-        <Route path="/form"
-        element={
-        <Form
-        
-        data={product}/>
-        }/>
-
-
-           <Route
-          path="/signup"
-          element={<Signup/>}
-        />
-
-      <Route
-          path="/login"
-          element={<Login/>}
-        />
         <Route
           path="/"
           element={
+            // <h1
             <Home
               products={product}
-              addToCart={addToCart}
               toggleWishlist={toggleWishlist}
               favData={favData}
             />
+
+            // />
           }
         />
-        <Route path="/" element={<Home data={product} />} />
-        <Route
-          path="/product"
-          element={<Product data={product} addToCart={addToCart} />}
-        />
+        <Route path="/form" element={<Form data={product} />} />
+
+        <Route path="/signup" element={<Signup />} />
+
+        <Route path="/login" element={<Login />} />
+        <Route path="/product" element={<Product data={product} />} />
         <Route
           path="/wishlists"
           element={<Wishlist favData={favData} clearWishList={clearWishList} />}
         />
+        <Route path="/cart" element={<Cart />} />
       </Routes>
       <Footer />
     </>

@@ -7,8 +7,8 @@ const Header = () => {
       <div id="left">
         <div>
           <Link to="/" className="link">
-          <h1>e-product</h1>
-        </Link>
+            <h1>e-product</h1>
+          </Link>
         </div>
       </div>
 
@@ -28,13 +28,18 @@ const Header = () => {
         <div>
           <Link to="/wishlists">
             {" "}
-            <HeartIcon/>
+            <HeartIcon />
           </Link>
         </div>
 
         <div>
-          
-          <ShoppingCart className="h-cart" />
+          <Link to="/cart">
+            {" "}
+            <button className="form-btn">
+              {" "}
+              <ShoppingCart className="h-cart" />{" "}
+            </button>
+          </Link>
         </div>
       </div>
     </div>
