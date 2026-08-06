@@ -1,30 +1,31 @@
 import { memo } from "react";
 import { Heart, ShoppingCart } from "lucide-react";
 import { axiosInstance } from "../axios";
+import { dummyImg, imgBaseURL } from "../staticData";
 
-const Card = (prop) => {
-  const isFav = (prop.favData || []).some((item) => item.id === prop.id);
+const Card = ({ product, toggleWishlist, favData = [] }) => {
+  const isFav = favData.some((item) => item._id === product._id);
 
-  const addToCart = async (product) => {
+  const addToCart = async (productId) => {
     try {
-      console.log("add to cart clicked", product);
-
-      await axiosInstance.post("/cart", { productId: product });
-      alert("Product added to cart");
-    } catch (err) {
-      console.log(err);
+      const payload = { productId, quantity: 1 };
+      await axiosInstance.post("/cart", payload);
+    } catch (error) {
+      console.log(error);
     }
   };
 
   return (
     <div className="card">
-      <div key={prop.id}>
-        <img src={prop.image} alt="" />
-        <p> {prop.title}</p>
-
-        <p>{prop.discription}</p>
+      <div>
+        <img
+          src={product?.image ? `${imgBaseURL}${product.image}` : dummyImg}
+          alt={product.name}
+        />
+        <p>{product.name}</p>
+        <p>{product.description || "description is not found"}</p>
         <p>
-          <span>{prop.price}</span>
+          <span>{product.price}</span>
         </p>
       </div>
       <div className="card-btn">
@@ -32,16 +33,15 @@ const Card = (prop) => {
           className="heart-icon"
           fill={isFav ? "red" : "none"}
           color={isFav ? "red" : "gray"}
-          onClick={() => prop.toggleWishlist(prop)}
+          style={{ cursor: "pointer" }}
+          onClick={() => toggleWishlist(product)}
         />
         <ShoppingCart
           className="icon"
-          onClick={() => {
-            console.log("add to cart clicked");
-            addToCart(prop.id);
-          }}
+          style={{ cursor: "pointer" }}
+          onClick={() => addToCart(product._id)}
         />
-      </div>{" "}
+      </div>
     </div>
   );
 };

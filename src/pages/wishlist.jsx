@@ -1,20 +1,7 @@
 import { CircleX } from "lucide-react";
-import { axiosInstance } from "../axios";
-import { useEffect } from "react";
+import { imgBaseURL, dummyImg } from "../staticData";
 
-export default function Wishlist({ favData, setFavData, clearWishList }) {
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const responce = await axiosInstance.get("/products");
-        console.log("responce", responce);
-        setFavData(responce?.data?.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData();
-  }, []);
+export default function Wishlist({ favData, toggleWishlist, clearWishList }) {
   return (
     <div className="wishlist">
       <div
@@ -25,43 +12,47 @@ export default function Wishlist({ favData, setFavData, clearWishList }) {
           padding: "1rem",
         }}
       >
-        <h2>My Wishlist </h2>
+        <h2>My Wishlist</h2>
+
         {favData.length > 0 && (
           <button className="clearBtn" onClick={clearWishList}>
-            clear All <CircleX />
+            Clear All <CircleX />
           </button>
         )}
       </div>
+
       <div className="container">
-        {favData.map((elem) => {
-          return (
-            <WishListCard
-              key={elem.id}
-              id={elem.id}
-              title={elem.title}
-              discription={elem.description}
-              price={elem.price}
-              image={elem.image}
-            />
-          );
-        })}
+        {favData.map((product) => (
+          <WishListCard
+            key={product._id}
+            product={product}
+            toggleWishlist={toggleWishlist}
+          />
+        ))}
       </div>
     </div>
   );
 }
 
-export const WishListCard = (prop) => {
+export const WishListCard = ({ product, toggleWishlist }) => {
   return (
     <div className="card">
-      <div key={prop.id}>
-        <img src={prop.image} alt="" />
-        <p> {prop.title}</p>
+      <img
+        src={product?.image ? `${imgBaseURL}${product.image}` : dummyImg}
+        alt={product.name}
+      />
 
-        <p>{prop.discription}</p>
-        <p>
-          <span>{prop.price}</span>
-        </p>
-      </div>
+      <p>
+        <b>{product.name}</b>
+      </p>
+
+      <p>{product.description || "description is not found"}</p>
+
+      <p>
+        ₹<span>{product.price}</span>
+      </p>
+
+      <button onClick={() => toggleWishlist(product)}>Remove</button>
     </div>
   );
 };

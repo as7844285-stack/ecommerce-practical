@@ -24,55 +24,71 @@ const App = () => {
         console.log(error);
       }
     };
+
+    const fetchWishlist = async () => {
+      try {
+        const res = await axiosInstance.get("/wishlist");
+        console.log("wishlist response:", res?.data);
+        setFavData(res?.data?.data || []);
+      } catch (error) {
+        console.log("wishlist fetch error:", error);
+      }
+    };
+
     fetchData();
+    fetchWishlist();
   }, []);
 
-  // Don't put this inside addToCart
-  const toggleWishlist = (product) => {
-    const exist = favData.find((item) => item.id === product.id);
+  const toggleWishlist = async (product) => {
+    const exist = favData.some((item) => item._id === product._id);
 
-    if (exist) {
-      setFavData(favData.filter((item) => item.id !== product.id));
-    } else {
-      setFavData([...favData, product]);
+    try {
+      if (exist) {
+        await axiosInstance.delete("/wishlist", {
+          data: { productId: product._id },
+        });
+        setFavData((prev) => prev.filter((item) => item._id !== product._id));
+      } else {
+        await axiosInstance.post("/wishlist", { productId: product._id });
+        setFavData((prev) => [...prev, product]);
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
-  //clear wishlist
   const clearWishList = () => {
-    console.log("clearWishlist clicked");
     setFavData([]);
   };
-
-  //local storage
 
   return (
     <>
       <Header />
-
       <Routes>
         <Route
           path="/"
           element={
-            // <h1
             <Home
               products={product}
               toggleWishlist={toggleWishlist}
               favData={favData}
             />
-
-            // />
           }
         />
         <Route path="/form" element={<Form data={product} />} />
-
         <Route path="/signup" element={<Signup />} />
-
         <Route path="/login" element={<Login />} />
         <Route path="/product" element={<Product data={product} />} />
+
         <Route
           path="/wishlists"
-          element={<Wishlist favData={favData} clearWishList={clearWishList} />}
+          element={
+            <Wishlist
+              favData={favData}
+              toggleWishlist={toggleWishlist}
+              clearWishList={clearWishList}
+            />
+          }
         />
         <Route path="/cart" element={<Cart />} />
       </Routes>
