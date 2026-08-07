@@ -10,18 +10,24 @@ import Product from "./pages/product";
 import Signup from "./pages/signup";
 import Login from "./pages/login";
 import Cart from "./pages/cart";
+import OrderSuccess from "./pages/order-success";
 
 const App = () => {
+  const [loading, setLoading] = useState(true);
   const [favData, setFavData] = useState([]);
   const [product, setProducts] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const products = await axiosInstance.get("/products");
+        await new Promise((r) => setTimeout(r, 1500));
         setProducts(products?.data?.data);
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -60,7 +66,7 @@ const App = () => {
   const clearWishList = () => {
     setFavData([]);
   };
-
+  console.log("App loading:", loading);
   return (
     <>
       <Header />
@@ -78,7 +84,17 @@ const App = () => {
         <Route path="/form" element={<Form data={product} />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/product" element={<Product data={product} />} />
+        {/* <Route path="/product" element={<Product data={product} />} /> */}
+        <Route
+          path="/product"
+          element={
+            <Product
+              products={product}
+              toggleWishlist={toggleWishlist}
+              favData={favData}
+            />
+          }
+        />
 
         <Route
           path="/wishlists"
@@ -91,6 +107,7 @@ const App = () => {
           }
         />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/order-success" element={<OrderSuccess />} />
       </Routes>
       <Footer />
     </>

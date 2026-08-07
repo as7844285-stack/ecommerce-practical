@@ -1,19 +1,15 @@
 import { useEffect, useState } from "react";
 import Card from "../components/card";
 import { axiosInstance } from "../axios";
-import { dummyImg, imgBaseURL } from "../staticData";
 
-export default function Product() {
+export default function Product({ toggleWishlist, favData }) {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const products = await axiosInstance.get("/products");
-        console.log("products", products);
-
-        setProducts(products?.data?.data);
-        console.log("products", products);
+        const res = await axiosInstance.get("/products");
+        setProducts(res?.data?.data || []);
       } catch (err) {
         console.log(err);
       }
@@ -22,22 +18,17 @@ export default function Product() {
   }, []);
 
   return (
-    <div className="">
-      <h2>All Products </h2>
+    <div>
+      <h2>All Products</h2>
       <div className="container">
-        {products.map((elem) => {
-          return (
-            <Card
-              key={elem._id}
-              id={elem._id}
-              title={elem.name}
-              discription={elem?.description || "description not found"}
-              price={elem.price}
-              image={elem?.image ? `${imgBaseURL}${elem?.image}` : dummyImg}
-              addToCart={elem._id}
-            />
-          );
-        })}
+        {products.map((elem) => (
+          <Card
+            key={elem._id}
+            product={elem}
+            toggleWishlist={toggleWishlist}
+            favData={favData}
+          />
+        ))}
       </div>
     </div>
   );

@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { axiosInstance } from "../axios";
 import { dummyImg, imgBaseURL } from "../staticData";
+import { useNavigate } from "react-router-dom";
 
 export default function Cart() {
   const [cartData, setCartData] = useState([]);
+  const [placing, setPlacing] = useState(false);
+  const navigate = useNavigate();
 
   const fetchCart = useCallback(async () => {
     try {
@@ -42,6 +45,27 @@ export default function Cart() {
     }
   };
 
+  const placeOrder = async () => {
+    if (cartData.length === 0) return;
+    setPlacing(true);
+    try {
+      const res = await axiosInstance.post("/order");
+      if (res?.data?.success) {
+        setCartData([]);
+        navigate("/order-success", { state: { order: res.data.data } });
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setPlacing(false);
+    }
+  };
+
+  const totalAmount = cartData.reduce(
+    (sum, item) => sum + item.product.price * item.quantity,
+    0,
+  );
+
   return (
     <div className="addToCart">
       <div className="cart-header">
@@ -51,17 +75,36 @@ export default function Cart() {
       {cartData.length === 0 ? (
         <p className="cart-empty">Your cart is empty</p>
       ) : (
-        <div className="boxes">
-          {cartData.map((item) => (
-            <CartCard
-              key={item.product._id}
-              item={item}
-              onIncrease={() => updateQty(item.product._id, item.quantity + 1)}
-              onDecrease={() => updateQty(item.product._id, item.quantity - 1)}
-              onRemove={() => removeCart(item.product._id)}
-            />
-          ))}
-        </div>
+        <>
+          <div className="boxes">
+            {cartData.map((item) => (
+              <CartCard
+                key={item.product._id}
+                item={item}
+                onIncrease={() =>
+                  updateQty(item.product._id, item.quantity + 1)
+                }
+                onDecrease={() =>
+                  updateQty(item.product._id, item.quantity - 1)
+                }
+                onRemove={() => removeCart(item.product._id)}
+              />
+            ))}
+          </div>
+
+          <div className="cart-summary">
+            <p className="cart-total">
+              Total: <span>₹{totalAmount}</span>
+            </p>
+            <button
+              className="place-order-btn"
+              onClick={placeOrder}
+              disabled={placing}
+            >
+              {placing ? "Placing Order..." : "Place Order"}
+            </button>
+          </div>
+        </>
       )}
     </div>
   );

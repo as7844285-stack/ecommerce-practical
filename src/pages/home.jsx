@@ -2,7 +2,7 @@ import { memo } from "react";
 import Banner from "../components/banner";
 import Card from "../components/card";
 
-const Home = ({ products = [], toggleWishlist, favData }) => {
+const Home = ({ products = [], toggleWishlist, favData, loading }) => {
   return (
     <div>
       <Banner />

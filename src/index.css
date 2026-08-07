@@ -212,7 +212,7 @@ img {
 /* Cap at 5 columns on large screens instead of letting auto-fit keep growing */
 @media (min-width: 1400px) {
   .container {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
   }
 }
 
@@ -227,6 +227,7 @@ img {
   transition: 0.3s ease;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   padding: 1rem;
+  margin: 0 auto;
 }
 
 .card:hover {
@@ -367,13 +368,12 @@ h2 {
 
 /* ---------- Cart ---------- */
 .boxes {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
   flex-wrap: wrap;
   gap: 2rem;
   padding: 10px;
   margin: 10px;
-  justify-content: start;
+  justify-content: center;
 }
 
 .qty-container {
@@ -592,7 +592,7 @@ h2 {
 
 @media (min-width: 1024px) {
   .ban {
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
   }
 
