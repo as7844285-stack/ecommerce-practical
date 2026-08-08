@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 
 export default function Cart() {
   const [cartData, setCartData] = useState([]);
-  const [placing, setPlacing] = useState(false);
   const navigate = useNavigate();
 
   const fetchCart = useCallback(async () => {
@@ -23,42 +22,38 @@ export default function Cart() {
 
   const removeCart = async (productId) => {
     try {
-      await axiosInstance.delete("/cart", { data: { productId } });
-      setCartData((prev) =>
-        prev.filter((item) => item.product._id !== productId),
-      );
+      const res = await axiosInstance.delete("/cart", {
+        data: { productId },
+      });
+      if (res?.data?.success) {
+        setCartData((prev) =>
+          prev.filter((item) => item.product._id !== productId),
+        );
+      }
     } catch (error) {
       console.log(error);
     }
   };
 
   const updateQty = async (productId, quantity) => {
+    if (quantity < 1) return;
     try {
-      await axiosInstance.put("/cart", { productId, quantity });
-      setCartData((prev) =>
-        prev.map((item) =>
-          item.product._id === productId ? { ...item, quantity } : item,
-        ),
-      );
+      const res = await axiosInstance.put("/cart", { productId, quantity });
+      if (res?.data?.success) {
+        setCartData((prev) =>
+          prev.map((item) =>
+            item.product._id === productId ? { ...item, quantity } : item,
+          ),
+        );
+      }
     } catch (error) {
       console.log(error);
     }
   };
 
-  const placeOrder = async () => {
+  const goToCheckout = () => {
     if (cartData.length === 0) return;
-    setPlacing(true);
-    try {
-      const res = await axiosInstance.post("/order");
-      if (res?.data?.success) {
-        setCartData([]);
-        navigate("/order-success", { state: { order: res.data.data } });
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setPlacing(false);
-    }
+    navigate("/checkout");
   };
 
   const totalAmount = cartData.reduce(
@@ -96,12 +91,8 @@ export default function Cart() {
             <p className="cart-total">
               Total: <span>₹{totalAmount}</span>
             </p>
-            <button
-              className="place-order-btn"
-              onClick={placeOrder}
-              disabled={placing}
-            >
-              {placing ? "Placing Order..." : "Place Order"}
+            <button className="place-order-btn" onClick={goToCheckout}>
+              Proceed to Checkout
             </button>
           </div>
         </>
@@ -117,10 +108,10 @@ const CartCard = ({ item, onIncrease, onDecrease, onRemove }) => {
     <div className="card">
       <img
         src={product?.image ? `${imgBaseURL}${product.image}` : dummyImg}
-        alt={product.name}
+        alt={product?.name || "Product"}
       />
-      <h3>{product.name}</h3>
-      <p>₹{product.price}</p>
+      <h3>{product?.name}</h3>
+      <p>₹{product?.price}</p>
 
       <div className="qty-container">
         <button

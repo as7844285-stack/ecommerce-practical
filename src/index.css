@@ -554,7 +554,7 @@ h2 {
   color: #888;
   margin: 0;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  /* -webkit-line-clamp: 2; */
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -981,4 +981,100 @@ h2 {
   padding: 6px 10px;
   border-radius: 6px;
   border: 1px solid #ddd;
+}
+
+/* ---------- Checkout ---------- */
+.checkout {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 2rem;
+  background: #88bda4;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.checkout h1 {
+  color: white;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+}
+
+.checkout form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.checkout input,
+.checkout textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+  font-family: inherit;
+  background: #fff;
+  transition: box-shadow 0.2s ease;
+}
+
+.checkout input:focus,
+.checkout textarea:focus {
+  box-shadow: 0 0 0 3px rgba(255, 20, 83, 0.25);
+}
+
+.checkout textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.checkout > form > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #b1d3b9;
+  padding: 12px 16px;
+  border-radius: 8px;
+  color: #333;
+}
+
+.checkout > form > div strong {
+  color: #1f3d2e;
+}
+
+.checkout > form > div p {
+  margin: 0;
+  font-weight: 600;
+  color: #2e7d32;
+}
+
+.checkout button[type="submit"] {
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  background: #ff1453;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-top: 8px;
+}
+
+.checkout button[type="submit"]:hover:not(:disabled) {
+  transform: scale(1.02);
+}
+
+.checkout button[type="submit"]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .checkout {
+    margin: 20px auto;
+    padding: 1.25rem;
+    border-radius: 12px;
+  }
 }

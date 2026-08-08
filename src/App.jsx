@@ -1,7 +1,7 @@
 import { memo, useEffect, useState } from "react";
 import Header from "./components/header";
 import Footer from "./components/footer";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import Wishlist from "./pages/wishlist";
 import Home from "./pages/home";
 import Form from "./pages/form";
@@ -12,6 +12,23 @@ import Login from "./pages/login";
 import Cart from "./pages/cart";
 import OrderSuccess from "./pages/order-success";
 import Admin from "./pages/admin";
+import Checkout from "./pages/checkout";
+
+// TODO: replace this with your real auth source (context/localStorage/etc.)
+const useAuth = () => {
+  const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user") || "null");
+  return { isAuthenticated: !!token, isAdmin: user?.role === "admin" };
+};
+
+const ProtectedRoute = ({ children, adminOnly = false }) => {
+  const { isAuthenticated, isAdmin } = useAuth();
+
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (adminOnly && !isAdmin) return <Navigate to="/" replace />;
+
+  return children;
+};
 
 const App = () => {
   const [loading, setLoading] = useState(true);
@@ -23,7 +40,7 @@ const App = () => {
       setLoading(true);
       try {
         const products = await axiosInstance.get("/products");
-        setProducts(products?.data?.data);
+        setProducts(products?.data?.data || []);
       } catch (error) {
         console.log(error);
       } finally {
@@ -34,7 +51,6 @@ const App = () => {
     const fetchWishlist = async () => {
       try {
         const res = await axiosInstance.get("/wishlist");
-        console.log("wishlist response:", res?.data);
         setFavData(res?.data?.data || []);
       } catch (error) {
         console.log("wishlist fetch error:", error);
@@ -50,13 +66,19 @@ const App = () => {
 
     try {
       if (exist) {
-        await axiosInstance.delete("/wishlist", {
+        const res = await axiosInstance.delete("/wishlist", {
           data: { productId: product._id },
         });
-        setFavData((prev) => prev.filter((item) => item._id !== product._id));
+        if (res?.data?.success) {
+          setFavData((prev) => prev.filter((item) => item._id !== product._id));
+        }
       } else {
-        await axiosInstance.post("/wishlist", { productId: product._id });
-        setFavData((prev) => [...prev, product]);
+        const res = await axiosInstance.post("/wishlist", {
+          productId: product._id,
+        });
+        if (res?.data?.success) {
+          setFavData((prev) => [...prev, product]);
+        }
       }
     } catch (error) {
       console.log(error);
@@ -66,7 +88,17 @@ const App = () => {
   const clearWishList = () => {
     setFavData([]);
   };
-  console.log("App loading:", loading);
+
+  if (loading) {
+    return (
+      <>
+        <Header />
+        <div className="app-loading">Loading...</div>
+        <Footer />
+      </>
+    );
+  }
+
   return (
     <>
       <Header />
@@ -84,7 +116,6 @@ const App = () => {
         <Route path="/form" element={<Form data={product} />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
-        {/* <Route path="/product" element={<Product data={product} />} /> */}
         <Route
           path="/product"
           element={
@@ -95,7 +126,6 @@ const App = () => {
             />
           }
         />
-
         <Route
           path="/wishlists"
           element={
@@ -108,7 +138,22 @@ const App = () => {
         />
         <Route path="/cart" element={<Cart />} />
         <Route path="/order-success" element={<OrderSuccess />} />
-        <Route path="/admin" element={<Admin />} />
+        <Route
+          path="/checkout"
+          element={
+            <ProtectedRoute>
+              <Checkout />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute adminOnly>
+              <Admin />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
       <Footer />
     </>

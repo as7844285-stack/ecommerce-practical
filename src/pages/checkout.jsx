@@ -1,13 +1,14 @@
 import { useState } from "react";
-import axiosInstance from "../api/axiosInstance";
+import { axiosInstance } from "../axios";
 
-const Checkout = ({ cartItems }) => {
+const Checkout = () => {
   const [address, setAddress] = useState({
     name: "",
     phone: "",
     address: "",
     city: "",
     state: "",
+    country: "",
     pincode: "",
   });
 
@@ -26,23 +27,15 @@ const Checkout = ({ cartItems }) => {
     try {
       setLoading(true);
 
-      const items = cartItems.map((item) => ({
-        product: item.product._id,
-        quantity: item.quantity,
-      }));
-
       const response = await axiosInstance.post("/orders", {
-        items,
         shippingAddress: address,
         paymentMethod: "COD",
       });
 
       console.log(response.data);
-
       alert("Order placed successfully!");
     } catch (error) {
       console.log(error.response?.data || error);
-
       alert(error.response?.data?.message || "Failed to place order");
     } finally {
       setLoading(false);
@@ -62,7 +55,6 @@ const Checkout = ({ cartItems }) => {
           onChange={handleChange}
           required
         />
-
         <input
           type="text"
           name="phone"
@@ -71,7 +63,6 @@ const Checkout = ({ cartItems }) => {
           onChange={handleChange}
           required
         />
-
         <textarea
           name="address"
           placeholder="Address"
@@ -79,7 +70,6 @@ const Checkout = ({ cartItems }) => {
           onChange={handleChange}
           required
         />
-
         <input
           type="text"
           name="city"
@@ -88,7 +78,6 @@ const Checkout = ({ cartItems }) => {
           onChange={handleChange}
           required
         />
-
         <input
           type="text"
           name="state"
@@ -97,7 +86,14 @@ const Checkout = ({ cartItems }) => {
           onChange={handleChange}
           required
         />
-
+        <input
+          type="text"
+          name="country"
+          placeholder="Country"
+          value={address.country}
+          onChange={handleChange}
+          required
+        />
         <input
           type="text"
           name="pincode"
@@ -109,7 +105,6 @@ const Checkout = ({ cartItems }) => {
 
         <div>
           <strong>Payment Method</strong>
-
           <p>Cash on Delivery</p>
         </div>
 
