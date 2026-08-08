@@ -8,11 +8,11 @@ const Banner = () => {
         alt="Banner"
       />
       <div className="banner-contant">
-        <p>WELCOME TO THE E-PRODUCT</p>
-        <p>Best Deals & Offers Available </p>
-        </div>
-        <button className="banner-btn">Shop Now </button>
-      
+        <p>WELCOME TO THE CANVASORE</p>
+        <p>Your Space. Your Story. Your Art</p>
+        <p>Find the perfect painting for your home, office, or collection.</p>
+      </div>
+      <button className="banner-btn">Buy Now </button>
     </div>
   );
 };

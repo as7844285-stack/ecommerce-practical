@@ -1,4 +1,4 @@
-import { HeartIcon, ShoppingCart } from "lucide-react";
+import { CircleUser, HeartIcon, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Header = () => {
@@ -7,7 +7,7 @@ const Header = () => {
       <div id="left">
         <div>
           <Link to="/" className="link">
-            <h1>e-product</h1>
+            <h1>Canvasora</h1>
           </Link>
         </div>
       </div>
@@ -41,8 +41,23 @@ const Header = () => {
             </button>
           </Link>
         </div>
+        <div>
+          <Link to="/admin">
+            {" "}
+            <button className="form-btn">
+              {" "}
+              <CircleUser
+                size={28}
+                color="#000000"
+                strokeWidth={2.75}
+                absoluteStrokeWidth
+              />{" "}
+            </button>
+          </Link>
+        </div>
       </div>
     </div>
   );
 };
+
 export default Header;

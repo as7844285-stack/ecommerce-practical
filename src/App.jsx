@@ -11,6 +11,7 @@ import Signup from "./pages/signup";
 import Login from "./pages/login";
 import Cart from "./pages/cart";
 import OrderSuccess from "./pages/order-success";
+import Admin from "./pages/admin";
 
 const App = () => {
   const [loading, setLoading] = useState(true);
@@ -22,7 +23,6 @@ const App = () => {
       setLoading(true);
       try {
         const products = await axiosInstance.get("/products");
-        await new Promise((r) => setTimeout(r, 1500));
         setProducts(products?.data?.data);
       } catch (error) {
         console.log(error);
@@ -108,6 +108,7 @@ const App = () => {
         />
         <Route path="/cart" element={<Cart />} />
         <Route path="/order-success" element={<OrderSuccess />} />
+        <Route path="/admin" element={<Admin />} />
       </Routes>
       <Footer />
     </>
