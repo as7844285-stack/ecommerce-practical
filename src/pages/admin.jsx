@@ -11,6 +11,10 @@ export default function Admin() {
   const fetchProducts = async () => {
     try {
       const res = await axiosInstance.get("/products");
+
+      console.log("fetchProducts res", res);
+
+      console.log("res", res);
       setProducts(res?.data?.data || []);
     } catch (error) {
       console.log(error);

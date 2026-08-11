@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { axiosInstance } from "../axios";
+import { useNavigate } from "react-router-dom";
 
 const Checkout = () => {
   const [address, setAddress] = useState({
@@ -13,6 +14,7 @@ const Checkout = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setAddress({
@@ -27,14 +29,16 @@ const Checkout = () => {
     try {
       setLoading(true);
 
-      const response = await axiosInstance.post("/orders", {
+      const response = await axiosInstance.post("/order", {
         shippingAddress: address,
         paymentMethod: "COD",
       });
 
-      console.log(response.data);
-      alert("Order placed successfully!");
+      if (response?.data?.success) {
+        navigate("/order-success", { state: { order: response.data.data } });
+      }
     } catch (error) {
+      console.log("error : ");
       console.log(error.response?.data || error);
       alert(error.response?.data?.message || "Failed to place order");
     } finally {

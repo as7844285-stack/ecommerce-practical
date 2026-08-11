@@ -25,7 +25,7 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
   const { isAuthenticated, isAdmin } = useAuth();
 
   if (!isAuthenticated) return <Navigate to="/login" replace />;
-  if (adminOnly && !isAdmin) return <Navigate to="/" replace />;
+  // if (adminOnly && !isAdmin) return <Navigate to="/" replace />;
 
   return children;
 };
@@ -137,6 +137,7 @@ const App = () => {
           }
         />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
         <Route path="/order-success" element={<OrderSuccess />} />
         <Route
           path="/checkout"
@@ -146,14 +147,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute adminOnly>
-              <Admin />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/admin" element={<Admin />} />
       </Routes>
       <Footer />
     </>
