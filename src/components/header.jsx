@@ -1,4 +1,4 @@
-import { CircleUser, HeartIcon, ShoppingCart } from "lucide-react";
+import { HeartIcon, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Header = () => {
@@ -13,12 +13,12 @@ const Header = () => {
       </div>
 
       <div id="right">
-        <div>
+        {/* <div>
           <Link to="/Form">
             {" "}
             <button className="form-btn"> Form</button>
           </Link>
-        </div>
+        </div> */}
         <div>
           <Link to="/Product">
             {" "}
@@ -41,7 +41,7 @@ const Header = () => {
             </button>
           </Link>
         </div>
-        <div>
+        {/* <div>
           <Link to="/admin">
             {" "}
             <button className="form-btn">
@@ -53,8 +53,8 @@ const Header = () => {
                 absoluteStrokeWidth
               />{" "}
             </button>
-          </Link>
-        </div>
+          </Link> */}
+        {/* </div> */}
       </div>
     </div>
   );

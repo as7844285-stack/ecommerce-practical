@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../axios";
 import { imgBaseURL, dummyImg } from "../staticData";
 
@@ -7,14 +8,11 @@ export default function Admin() {
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const fetchProducts = async () => {
     try {
       const res = await axiosInstance.get("/products");
-
-      console.log("fetchProducts res", res);
-
-      console.log("res", res);
       setProducts(res?.data?.data || []);
     } catch (error) {
       console.log(error);
@@ -80,6 +78,13 @@ export default function Admin() {
           onClick={() => setTab("orders")}
         >
           Orders ({orders.length})
+        </button>
+
+        <button
+          className="admin-tab"
+          onClick={() => navigate("/admin/addProduct/fromAdmin")}
+        >
+          + Add Product
         </button>
       </div>
 
