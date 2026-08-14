@@ -1,15 +1,13 @@
 import { useState } from "react";
-import axiosInstance from "../api/axiosInstance";
+import { axiosInstance } from "../axios";
 
 const AddProduct = () => {
-
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [image, setImage] = useState(null);
 
   const handleSubmit = async (e) => {
-
     e.preventDefault();
 
     const data = new FormData();
@@ -20,11 +18,7 @@ const AddProduct = () => {
     data.append("image", image);
 
     try {
-
-      const response = await axiosInstance.post(
-        "/product",
-        data
-      );
+      const response = await axiosInstance.post("/product", data);
 
       console.log(response.data);
 
@@ -34,26 +28,18 @@ const AddProduct = () => {
       setDescription("");
       setPrice("");
       setImage(null);
-
     } catch (error) {
-
       console.log(error);
 
-      alert(
-        error.response?.data?.message ||
-        "Product add failed"
-      );
-
+      alert(error.response?.data?.message || "Product add failed");
     }
   };
 
   return (
     <div className="add-product">
-
       <h1>Add New Product</h1>
 
       <form onSubmit={handleSubmit}>
-
         {/* Product Name */}
 
         <input
@@ -69,9 +55,7 @@ const AddProduct = () => {
         <textarea
           placeholder="Product Description"
           value={description}
-          onChange={(e) =>
-            setDescription(e.target.value)
-          }
+          onChange={(e) => setDescription(e.target.value)}
         />
 
         {/* Price */}
@@ -80,9 +64,7 @@ const AddProduct = () => {
           type="number"
           placeholder="Price"
           value={price}
-          onChange={(e) =>
-            setPrice(e.target.value)
-          }
+          onChange={(e) => setPrice(e.target.value)}
           required
         />
 
@@ -91,20 +73,14 @@ const AddProduct = () => {
         <input
           type="file"
           accept="image/*"
-          onChange={(e) =>
-            setImage(e.target.files[0])
-          }
+          onChange={(e) => setImage(e.target.files[0])}
           required
         />
 
         {/* Submit */}
 
-        <button type="submit">
-          Add Product
-        </button>
-
+        <button type="submit">Add Product</button>
       </form>
-
     </div>
   );
 };

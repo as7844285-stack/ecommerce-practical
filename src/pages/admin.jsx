@@ -82,7 +82,7 @@ export default function Admin() {
 
         <button
           className="admin-tab"
-          onClick={() => navigate("/admin/addProduct/fromAdmin")}
+          onClick={() => navigate("/admin/add-product")}
         >
           + Add Product
         </button>
