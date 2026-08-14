@@ -103,34 +103,28 @@ const App = () => {
   // ================= WISHLIST =================
 
   const toggleWishlist = async (product) => {
-    if (!product?._id) {
-      return;
-    }
+    if (!product?._id) return;
 
     const exist = favData.some((item) => item._id === product._id);
 
     try {
       if (exist) {
-        const res = await axiosInstance.delete("/wishlist", {
-          data: {
-            productId: product._id,
-          },
+        await axiosInstance.delete("/wishlist", {
+          data: { productId: product._id },
         });
-
-        if (res?.data?.success) {
-          setFavData((prev) => prev.filter((item) => item._id !== product._id));
-        }
+        setFavData((prev) => prev.filter((item) => item._id !== product._id));
       } else {
-        const res = await axiosInstance.post("/wishlist", {
+        await axiosInstance.post("/wishlist", {
           productId: product._id,
         });
-
-        if (res?.data?.success) {
-          setFavData((prev) => [...prev, product]);
-        }
+        setFavData((prev) => [...prev, product]);
       }
     } catch (error) {
-      console.log("Wishlist error:", error);
+      console.error(
+        "Wishlist error:",
+        error?.response?.status,
+        error?.response?.data || error.message,
+      );
     }
   };
 
