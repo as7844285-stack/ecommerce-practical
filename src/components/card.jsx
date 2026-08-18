@@ -4,8 +4,7 @@ import { axiosInstance } from "../axios";
 import { dummyImg, imgBaseURL } from "../staticData";
 
 const Card = ({ product, toggleWishlist, favData = [] }) => {
-  const isFav = favData.some((item) => item._id === product._id);
-
+  const isFav = favData.some((item) => item && item._id === product?._id);
   const addToCart = async (productId) => {
     try {
       const payload = { productId, quantity: 1 };
