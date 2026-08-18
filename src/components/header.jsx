@@ -13,12 +13,6 @@ const Header = () => {
       </div>
 
       <div id="right">
-        {/* <div>
-          <Link to="/Form">
-            {" "}
-            <button className="form-btn"> Form</button>
-          </Link>
-        </div> */}
         <div>
           <Link to="/Product">
             {" "}
@@ -41,20 +35,6 @@ const Header = () => {
             </button>
           </Link>
         </div>
-        {/* <div>
-          <Link to="/admin">
-            {" "}
-            <button className="form-btn">
-              {" "}
-              <CircleUser
-                size={28}
-                color="#000000"
-                strokeWidth={2.75}
-                absoluteStrokeWidth
-              />{" "}
-            </button>
-          </Link>
-        </div> */}
       </div>
     </div>
   );
