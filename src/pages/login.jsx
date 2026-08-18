@@ -31,23 +31,20 @@ const Signup = () => {
     }
 
     const obj = {
-      name,
       email,
       password,
     };
 
-    console.log( " submitted data " , obj);
+    console.log(" submitted data ", obj);
 
-    const responese=await axiosInstance.post("/user/login", obj);
+    const responese = await axiosInstance.post("/user/login", obj);
     console.log(responese.data);
-       navigate("/");
-       
 
     const token = responese.data.token;
     localStorage.setItem("token", token);
 
-    console.log("Token saved",token);
-    
+    console.log("Token saved", token);
+    navigate("/");
 
     // Clear form
     setEmail("");
@@ -95,7 +92,11 @@ const Signup = () => {
         />
         {error.password && <ErrorField field={error.password} />}
 
-        <button type="submit" className="subBtn" style={{backgroundColor:"gray"}}>
+        <button
+          type="submit"
+          className="subBtn"
+          style={{ backgroundColor: "gray" }}
+        >
           Submit
         </button>
       </form>
