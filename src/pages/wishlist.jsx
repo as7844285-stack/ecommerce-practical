@@ -24,7 +24,20 @@ export default function Wishlist({ favData, toggleWishlist, clearWishList }) {
 
       <div className="container">
         {safeFavData.length === 0 ? (
-          <p>Your wishlist is empty.</p>
+          <p
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alineItems: "center",
+              textAlign: "center",
+              padding: "1rem",
+              fontSize: "1.2rem",
+              color: "#777",
+              fontWeight: "bolder",
+            }}
+          >
+            Your wishlist is empty.
+          </p>
         ) : (
           safeFavData.map((product) => (
             <WishListCard
