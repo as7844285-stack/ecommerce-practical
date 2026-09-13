@@ -1,13 +1,14 @@
 import { useState, memo } from "react";
 import { axiosInstance } from "../axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
-const Signup = () => {
+const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,7 +22,7 @@ const Signup = () => {
     }
 
     if (!password.trim()) {
-      newError.password = "Password  is required.";
+      newError.password = "Password is required.";
     }
 
     setError(newError);
@@ -35,27 +36,40 @@ const Signup = () => {
       password,
     };
 
-    console.log(" submitted data ", obj);
+    try {
+      setLoading(true);
+      const response = await axiosInstance.post("/user/login", obj);
+      const token = response.data.token;
+      localStorage.setItem("token", token);
+      if (response.data.user) {
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+      }
 
-    const responese = await axiosInstance.post("/user/login", obj);
-    console.log(responese.data);
+      alert("Login successful!");
+      navigate("/");
 
-    const token = responese.data.token;
-    localStorage.setItem("token", token);
-
-    console.log("Token saved", token);
-    navigate("/");
-
-    // Clear form
-    setEmail("");
-    setPassword("");
-    setError({});
+      // Clear form
+      setEmail("");
+      setPassword("");
+      setError({});
+    } catch (err) {
+      console.error(err);
+      setError({
+        server:
+          err?.response?.data?.message ||
+          "Login failed. Please check your credentials.",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="productForm">
       <form onSubmit={handleSubmit}>
-        <h1>Log in </h1>
+        <h1>Log In</h1>
+
+        {error.server && <ErrorField field={error.server} />}
 
         <input
           type="email"
@@ -68,6 +82,7 @@ const Signup = () => {
               setError((prev) => ({
                 ...prev,
                 email: "",
+                server: "",
               }));
             }
           }}
@@ -86,6 +101,7 @@ const Signup = () => {
               setError((prev) => ({
                 ...prev,
                 password: "",
+                server: "",
               }));
             }
           }}
@@ -95,16 +111,24 @@ const Signup = () => {
         <button
           type="submit"
           className="subBtn"
-          style={{ backgroundColor: "gray" }}
+          disabled={loading}
+          style={{ backgroundColor: loading ? "#aaa" : "#88bda4", border: "none" }}
         >
-          Submit
+          {loading ? "Logging in..." : "Submit"}
         </button>
+
+        <p style={{ textAlign: "center", marginTop: "15px", color: "#333" }}>
+          Don't have an account?{" "}
+          <Link to="/signup" style={{ color: "#2563eb", fontWeight: "bold" }}>
+            Sign Up
+          </Link>
+        </p>
       </form>
     </div>
   );
 };
 
-export default memo(Signup);
+export default memo(Login);
 
 function ErrorField({ field }) {
   return (

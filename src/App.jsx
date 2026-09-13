@@ -2,7 +2,7 @@ import { memo, useEffect, useState } from "react";
 import Header from "./components/header";
 import Footer from "./components/footer";
 
-import { Route, Routes, Navigate } from "react-router-dom";
+import { Route, Routes, Navigate, useNavigate, useLocation } from "react-router-dom";
 
 import Wishlist from "./pages/wishlist";
 import Home from "./pages/home";
@@ -52,10 +52,11 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
 // ================= APP =================
 
 const App = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [loading, setLoading] = useState(true);
-
   const [favData, setFavData] = useState([]);
-
   const [product, setProducts] = useState([]);
 
   // ================= FETCH PRODUCTS =================
@@ -86,24 +87,37 @@ const App = () => {
 
   useEffect(() => {
     const fetchWishlist = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setFavData([]);
+        return;
+      }
+
       try {
         const res = await axiosInstance.get("/wishlist");
-
         setFavData(Array.isArray(res?.data?.data) ? res.data.data : []);
       } catch (error) {
-        console.log("Wishlist fetch error:", error);
-
+        if (error?.response?.status === 401) {
+          localStorage.removeItem("token");
+        }
         setFavData([]);
       }
     };
 
     fetchWishlist();
-  }, []);
+  }, [location.pathname]);
 
   // ================= WISHLIST =================
 
   const toggleWishlist = async (product) => {
     if (!product?._id) return;
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please log in to add items to your wishlist.");
+      navigate("/login");
+      return;
+    }
 
     const exist = favData.some((item) => item._id === product._id);
 
@@ -120,11 +134,17 @@ const App = () => {
         setFavData((prev) => [...prev, product]);
       }
     } catch (error) {
-      console.error(
-        "Wishlist error:",
-        error?.response?.status,
-        error?.response?.data || error.message,
-      );
+      if (error?.response?.status === 401) {
+        alert("Session expired. Please log in again.");
+        localStorage.removeItem("token");
+        navigate("/login");
+      } else {
+        console.error(
+          "Wishlist error:",
+          error?.response?.status,
+          error?.response?.data || error.message,
+        );
+      }
     }
   };
 

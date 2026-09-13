@@ -1,18 +1,16 @@
-
 import { useState, memo } from "react";
 import { axiosInstance } from "../axios";
-import { useNavigate } from "react-router-dom";
-//  const Signup = () => {
-  const Signup = ()=>{
-    const navigate = useNavigate();
-  
+import { useNavigate, Link } from "react-router-dom";
+
+const Signup = () => {
+  const navigate = useNavigate();
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState({});
   const [submitted, setSubmitted] = useState(false);
-
-  
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,15 +20,15 @@ import { useNavigate } from "react-router-dom";
     let newError = {};
 
     if (!name.trim()) {
-      newError.name = " name field is required";
+      newError.name = "Name field is required.";
     }
 
     if (!email.trim()) {
-      newError.email = "email field is required.";
+      newError.email = "Email field is required.";
     }
 
     if (!password.trim()) {
-      newError.passwor = "password field is required.";
+      newError.password = "Password field is required.";
     }
 
     setError(newError);
@@ -45,23 +43,35 @@ import { useNavigate } from "react-router-dom";
       password,
     };
 
-    console.log("submittd data :", obj);
+    try {
+      setLoading(true);
+      const response = await axiosInstance.post("/user/signup", obj);
+      console.log(response.data);
+      alert("Account created successfully! Please log in.");
+      navigate("/login");
 
-    const response= await axiosInstance.post("/user/signup", obj);
-         console.log(response.data);
-         navigate("/login");
-    alert("detailed filled successfully");
-
-    setName("");
-    setEmail("");
-    setPassword("");
-    setError({});
+      setName("");
+      setEmail("");
+      setPassword("");
+      setError({});
+    } catch (err) {
+      console.error(err);
+      setError({
+        server:
+          err?.response?.data?.message || "Signup failed. Please try again.",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="productForm">
       <form onSubmit={handleSubmit}>
         <h1>Sign-Up</h1>
+
+        {error.server && <ErrorField field={error.server} />}
+
         <input
           type="text"
           placeholder="Enter Your Name"
@@ -72,13 +82,14 @@ import { useNavigate } from "react-router-dom";
               setError((prev) => ({
                 ...prev,
                 name: "",
+                server: "",
               }));
             }
           }}
         />
         {error.name && <ErrorField field={error.name} />}
 
-          <input
+        <input
           type="email"
           placeholder="Enter Your E-mail"
           value={email}
@@ -88,27 +99,45 @@ import { useNavigate } from "react-router-dom";
               setError((prev) => ({
                 ...prev,
                 email: "",
+                server: "",
               }));
             }
           }}
         />
         {error.email && <ErrorField field={error.email} />}
+
         <input
           type="password"
-          placeholder="password"
+          placeholder="Password"
           value={password}
           onChange={(e) => {
             setPassword(e.target.value);
             if (submitted) {
               setError((prev) => ({
                 ...prev,
-                email: "",
+                password: "",
+                server: "",
               }));
             }
           }}
         />
         {error.password && <ErrorField field={error.password} />}
-        <button className="subBtn" style={{background:"gray"}}>Submit</button>
+
+        <button
+          type="submit"
+          className="subBtn"
+          disabled={loading}
+          style={{ backgroundColor: loading ? "#aaa" : "#88bda4", border: "none" }}
+        >
+          {loading ? "Submitting..." : "Submit"}
+        </button>
+
+        <p style={{ textAlign: "center", marginTop: "15px", color: "#333" }}>
+          Already have an account?{" "}
+          <Link to="/login" style={{ color: "#2563eb", fontWeight: "bold" }}>
+            Log In
+          </Link>
+        </p>
       </form>
     </div>
   );

@@ -6,12 +6,22 @@ import { useNavigate } from "react-router-dom";
 export default function Cart() {
   const [cartData, setCartData] = useState([]);
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
   const fetchCart = useCallback(async () => {
+    const currentToken = localStorage.getItem("token");
+    if (!currentToken) {
+      setCartData([]);
+      return;
+    }
+
     try {
       const res = await axiosInstance.get("/cart");
       setCartData(res?.data?.data?.products || []);
     } catch (error) {
+      if (error?.response?.status === 401) {
+        localStorage.removeItem("token");
+      }
       console.log(error);
     }
   }, []);
@@ -67,7 +77,16 @@ export default function Cart() {
         <h2>My Cart</h2>
       </div>
 
-      {cartData.length === 0 ? (
+      {!token ? (
+        <div style={{ textAlign: "center", padding: "3rem 1rem" }}>
+          <p className="cart-empty" style={{ marginBottom: "1.5rem" }}>
+            Please log in to view your cart.
+          </p>
+          <button className="btn" onClick={() => navigate("/login")}>
+            Go to Login
+          </button>
+        </div>
+      ) : cartData.length === 0 ? (
         <p className="cart-empty">Your cart is empty</p>
       ) : (
         <>
