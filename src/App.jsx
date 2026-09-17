@@ -159,7 +159,7 @@ const App = () => {
   if (loading) {
     return (
       <>
-        <Header />
+        <Header wishlistCount={favData.length} />
 
         <div className="app-loading">Loading...</div>
 
@@ -172,7 +172,7 @@ const App = () => {
 
   return (
     <>
-      <Header />
+      <Header wishlistCount={favData.length} />
 
       <Routes>
         {/* HOME */}
